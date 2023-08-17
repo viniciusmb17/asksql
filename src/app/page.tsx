@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useCompletion } from 'ai/react'
 import LogoImage from '@/assets/logo.svg'
 import Image from 'next/image'
 import { Stars, Trash2 } from 'lucide-react'
@@ -11,10 +12,14 @@ import 'prismjs/components/prism-sql'
 import 'prismjs/themes/prism-dark.css'
 
 export default function Home() {
-  const [code, setCode] = useState('')
-  const [question, setQuestion] = useState('')
+  const [schema, setSchema] = useState('')
 
-  const result = ''
+  const { completion, input, handleInputChange, handleSubmit } = useCompletion({
+    api: '/api/generate-sql',
+    body: {
+      schema,
+    },
+  })
 
   return (
     <div className="max-w-[430px] mx-auto px-4 pt-12 pb-4">
@@ -26,15 +31,18 @@ export default function Home() {
         </button>
       </header>
 
-      <form className="py-8 w-full flex flex-col text-foam">
+      <form
+        className="py-8 w-full flex flex-col text-foam"
+        onSubmit={handleSubmit}
+      >
         <label className="text-lg font-light" htmlFor="schema">
           Cole seu código SQL aqui:
         </label>
 
         <Editor
           textareaId="schema"
-          value={code}
-          onValueChange={(code) => setCode(code)}
+          value={schema}
+          onValueChange={(code) => setSchema(code)}
           highlight={(code) => highlight(code, languages.sql, 'sql')}
           padding={16}
           textareaClassName="outline-none"
@@ -47,8 +55,8 @@ export default function Home() {
         <textarea
           name="question"
           id="question"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
+          value={input}
+          onChange={handleInputChange}
           className="my-4 bg-blueberry-600 border border-blueberry-300 rounded-md px-4 py-3 outline-none focus:ring-1 focus:ring-lime-600"
         />
 
@@ -67,13 +75,13 @@ export default function Home() {
         </span>
         <Editor
           readOnly
-          value={result}
+          value={completion}
           // eslint-disable-next-line @typescript-eslint/no-empty-function
           onValueChange={() => {}}
           highlight={(code) => highlight(code, languages.sql, 'sql')}
           padding={16}
           textareaClassName="outline-none"
-          className="my-4 bg-transparent border border-blueberry-300 rounded-md outline-none w-full"
+          className="my-4 font-mono text-foam bg-transparent border border-blueberry-300 rounded-md outline-none w-full"
         />
       </div>
     </div>
