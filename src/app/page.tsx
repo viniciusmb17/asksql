@@ -1,8 +1,21 @@
+'use client'
+
+import { useState } from 'react'
 import LogoImage from '@/assets/logo.svg'
 import Image from 'next/image'
 import { Stars, Trash2 } from 'lucide-react'
+import Editor from 'react-simple-code-editor'
+import { highlight, languages } from 'prismjs'
+
+import 'prismjs/components/prism-sql'
+import 'prismjs/themes/prism-dark.css'
 
 export default function Home() {
+  const [code, setCode] = useState('')
+  const [question, setQuestion] = useState('')
+
+  const result = ''
+
   return (
     <div className="max-w-[430px] mx-auto px-4 pt-12 pb-4">
       <header className="flex items-center justify-between">
@@ -17,10 +30,15 @@ export default function Home() {
         <label className="text-lg font-light" htmlFor="schema">
           Cole seu código SQL aqui:
         </label>
-        <textarea
-          name="schema"
-          id="schema"
-          className="my-4 bg-blueberry-600 border border-blueberry-300 rounded-md px-4 py-3 outline-none focus:ring-2 focus:ring-lime-600"
+
+        <Editor
+          textareaId="schema"
+          value={code}
+          onValueChange={(code) => setCode(code)}
+          highlight={(code) => highlight(code, languages.sql, 'sql')}
+          padding={16}
+          textareaClassName="outline-none"
+          className="my-4 h-40 font-mono bg-blueberry-600 border border-blueberry-300 rounded-md outline-none focus-within:ring-1 focus-within:ring-lime-600"
         />
 
         <label className="text-lg font-light" htmlFor="question">
@@ -29,6 +47,8 @@ export default function Home() {
         <textarea
           name="question"
           id="question"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
           className="my-4 bg-blueberry-600 border border-blueberry-300 rounded-md px-4 py-3 outline-none focus:ring-1 focus:ring-lime-600"
         />
 
@@ -45,7 +65,16 @@ export default function Home() {
         <span className="text-lg font-light text-foam">
           Faça uma pergunta sobre o código:
         </span>
-        <textarea className="my-4 bg-transparent border border-blueberry-300 rounded-md px-4 py-3 outline-none focus:ring-1 focus:ring-lime-600 w-full" />
+        <Editor
+          readOnly
+          value={result}
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          onValueChange={() => {}}
+          highlight={(code) => highlight(code, languages.sql, 'sql')}
+          padding={16}
+          textareaClassName="outline-none"
+          className="my-4 bg-transparent border border-blueberry-300 rounded-md outline-none w-full"
+        />
       </div>
     </div>
   )
